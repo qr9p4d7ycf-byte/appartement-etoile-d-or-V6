@@ -1,0 +1,762 @@
+{
+ "site": {
+  "name": "Chalet l’étoile d’or",
+  "city": "Gérardmer",
+  "whatsapp": "+33600000000",
+  "email": "contact@exemple.fr",
+  "formEndpoint": "",
+  "registration": "88196190064G8",
+  "lat": 48.0736,
+  "lng": 6.8786,
+  "hero": "photos/exterieur.jpg",
+  "bookingEndpoint": "",
+  "maxGuests": 4
+ },
+ "langs": [
+  "fr",
+  "en",
+  "de"
+ ],
+ "defaultTheme": "or",
+ "sections": [
+  "hero",
+  "cinema",
+  "about",
+  "gallery",
+  "amenities",
+  "pricing",
+  "availability",
+  "map",
+  "reviews",
+  "faq",
+  "contact",
+  "discover"
+ ],
+ "themes": {
+  "or": {
+   "--bg": "#0b100e",
+   "--bg2": "#131b17",
+   "--ink": "#efe8d8",
+   "--muted": "#a9a392",
+   "--gold": "#c9a45c",
+   "light": false
+  },
+  "glace": {
+   "--bg": "#0a1218",
+   "--bg2": "#111e28",
+   "--ink": "#e6eef2",
+   "--muted": "#93a6b0",
+   "--gold": "#9fd0e0",
+   "light": false
+  },
+  "ivoire": {
+   "--bg": "#f1ede4",
+   "--bg2": "#e6dfd0",
+   "--ink": "#1a1f1c",
+   "--muted": "#5d6258",
+   "--gold": "#8f6d2a",
+   "light": true
+  }
+ },
+ "about": {
+  "title": [
+   "Cosy, pratique, et tout se fait à pied.",
+   "Cosy, practical, and everything is on foot.",
+   "Gemütlich, praktisch, alles zu Fuß erreichbar."
+  ],
+  "text": [
+   "Cuisine ouverte sur un salon lumineux, grande terrasse abritée, deux chambres, salle de douche avec sauna. Famille, amis ou déplacement professionnel : chacun a sa place, et le lac, les commerces et les restaurants sont accessibles à pied.",
+   "Open kitchen onto a bright living room, large covered terrace, two bedrooms, shower room with sauna. Family, friends or a business trip: there is room for everyone, and the lake, shops and restaurants are all within walking distance.",
+   "Offene Küche zum hellen Wohnzimmer, große überdachte Terrasse, zwei Schlafzimmer, Duschbad mit Sauna. Für Familie, Freunde oder Geschäftsreisen: Platz für alle, und See, Geschäfte und Restaurants liegen in Gehweite."
+  ],
+  "facts": [
+   [
+    "4 voyageurs",
+    "4 guests",
+    "4 Gäste"
+   ],
+   [
+    "2 chambres",
+    "2 bedrooms",
+    "2 Schlafzimmer"
+   ],
+   [
+    "Sauna privé",
+    "Private sauna",
+    "Private Sauna"
+   ],
+   [
+    "Terrasse couverte et jardin",
+    "Covered terrace and garden",
+    "Überdachte Terrasse und Garten"
+   ],
+   [
+    "Parmi les 5 % de logements préférés sur Airbnb",
+    "Among the top 5% of homes on Airbnb",
+    "Unter den beliebtesten 5 % der Unterkünfte auf Airbnb"
+   ]
+  ]
+ },
+ "photos": [
+  {
+   "src": "photos/salon.jpg",
+   "h": 40,
+   "alt": [
+    "Salon et cuisine ouverte",
+    "Living room and open kitchen",
+    "Wohnzimmer und offene Küche"
+   ]
+  },
+  {
+   "src": "photos/terrasse.jpg",
+   "h": 150,
+   "alt": [
+    "La terrasse couverte",
+    "The covered terrace",
+    "Die überdachte Terrasse"
+   ]
+  },
+  {
+   "src": "photos/sauna.jpg",
+   "h": 30,
+   "alt": [
+    "Le sauna privé",
+    "The private sauna",
+    "Die private Sauna"
+   ]
+  },
+  {
+   "src": "photos/chambre-double.jpg",
+   "h": 200,
+   "alt": [
+    "Chambre avec lit double",
+    "Double bedroom",
+    "Doppelzimmer"
+   ]
+  },
+  {
+   "src": "photos/chambre-twin.jpg",
+   "h": 170,
+   "alt": [
+    "Chambre avec lits simples",
+    "Twin bedroom",
+    "Zimmer mit Einzelbetten"
+   ]
+  },
+  {
+   "src": "photos/repas.jpg",
+   "h": 35,
+   "alt": [
+    "Espace repas",
+    "Dining area",
+    "Essbereich"
+   ]
+  },
+  {
+   "src": "photos/salle-de-bain.jpg",
+   "h": 20,
+   "alt": [
+    "Salle de douche",
+    "Shower room",
+    "Duschbad"
+   ]
+  },
+  {
+   "src": "photos/exterieur.jpg",
+   "h": 210,
+   "alt": [
+    "Le chalet",
+    "The chalet",
+    "Das Chalet"
+   ]
+  },
+  {
+   "src": "photos/neige.jpg",
+   "h": 205,
+   "alt": [
+    "Les environs en hiver",
+    "The surroundings in winter",
+    "Die Umgebung im Winter"
+   ]
+  }
+ ],
+ "amenities": [
+  [
+   "Cuisine équipée : induction, lave-vaisselle, Nespresso",
+   "Equipped kitchen: induction hob, dishwasher, Nespresso",
+   "Ausgestattete Küche: Induktion, Geschirrspüler, Nespresso"
+  ],
+  [
+   "Salon lumineux, télévision, wifi",
+   "Bright living room, TV, wifi",
+   "Helles Wohnzimmer, TV, WLAN"
+  ],
+  [
+   "Terrasse couverte, jardin, barbecue et chaises longues",
+   "Covered terrace, garden, barbecue and sun loungers",
+   "Überdachte Terrasse, Garten, Grill und Liegestühle"
+  ],
+  [
+   "Chambre avec lit double 160×200 et rangements",
+   "Bedroom with 160×200 double bed and storage",
+   "Schlafzimmer mit Doppelbett 160×200 und Stauraum"
+  ],
+  [
+   "Chambre avec 2 lits simples 90×200 et rangements",
+   "Bedroom with two 90×200 single beds and storage",
+   "Schlafzimmer mit zwei Einzelbetten 90×200 und Stauraum"
+  ],
+  [
+   "Salle de douche, sèche-cheveux, sauna",
+   "Shower room, hairdryer, sauna",
+   "Duschbad, Haartrockner, Sauna"
+  ],
+  [
+   "WC séparé, buanderie avec lave-linge",
+   "Separate WC, laundry room with washing machine",
+   "Separates WC, Waschküche mit Waschmaschine"
+  ],
+  [
+   "Linge de lit, draps de bain et serviettes fournis",
+   "Bed linen, bath sheets and towels provided",
+   "Bettwäsche, Bade- und Handtücher inklusive"
+  ],
+  [
+   "Ménage de fin de séjour inclus",
+   "End-of-stay cleaning included",
+   "Endreinigung inklusive"
+  ],
+  [
+   "Lit parapluie et chaise haute sur demande",
+   "Travel cot and high chair on request",
+   "Reisebett und Hochstuhl auf Anfrage"
+  ],
+  [
+   "Baignoire bébé, livres et jouets pour enfants",
+   "Baby bath, books and toys for children",
+   "Babybadewanne, Bücher und Spielzeug für Kinder"
+  ]
+ ],
+ "nearby": [
+  [
+   "Le lac de Gérardmer",
+   "Lake Gérardmer",
+   "Der See von Gérardmer",
+   "10 min"
+  ],
+  [
+   "Boulangeries",
+   "Bakeries",
+   "Bäckereien",
+   "400 m"
+  ],
+  [
+   "Supermarchés et commerces",
+   "Supermarkets and shops",
+   "Supermärkte und Geschäfte",
+   "400 m"
+  ],
+  [
+   "Pharmacies",
+   "Pharmacies",
+   "Apotheken",
+   "500 m"
+  ],
+  [
+   "Cafés et restaurants",
+   "Cafés and restaurants",
+   "Cafés und Restaurants",
+   "500 m"
+  ]
+ ],
+ "notes": [
+  [
+   "Électricité à régler sur place : 0,25 € par kWh, selon le relevé du compteur.",
+   "Electricity is paid on site: €0.25 per kWh, based on the meter reading.",
+   "Strom wird vor Ort bezahlt: 0,25 € pro kWh laut Zählerstand."
+  ],
+  [
+   "En été, location du samedi au samedi ou du dimanche au dimanche.",
+   "In summer, rentals run Saturday to Saturday or Sunday to Sunday.",
+   "Im Sommer Vermietung von Samstag bis Samstag oder Sonntag bis Sonntag."
+  ],
+  [
+   "Accueil et remise des clés par le propriétaire ou la conciergerie.",
+   "Welcome and key handover by the owner or the concierge.",
+   "Empfang und Schlüsselübergabe durch den Eigentümer oder den Concierge-Service."
+  ]
+ ],
+ "reviews": [
+  {
+   "name": "Exemple",
+   "text": [
+    "Remplacez cet avis par un vrai commentaire de voyageur dans content.json.",
+    "Replace this review with a real guest comment in content.json.",
+    "Ersetzen Sie diese Bewertung in content.json durch einen echten Gästekommentar."
+   ]
+  }
+ ],
+ "ui": {
+  "fr": {
+   "about": "L’appartement",
+   "gallery": "Galerie",
+   "amenities": "Équipements",
+   "availability": "Disponibilités",
+   "map": "Le quartier",
+   "reviews": "Avis",
+   "contact": "Réserver",
+   "cta": "Demander une réservation",
+   "cta2": "Voir la galerie",
+   "hero_sub": "Appartement en rez-de-jardin au cœur de Gérardmer, avec terrasse abritée et sauna.",
+   "hint": "Touchez votre arrivée, puis votre départ.",
+   "busy": "Ces nuits ne sont pas toutes libres.",
+   "free": "Libre",
+   "taken": "Occupé",
+   "name": "Nom",
+   "email": "E-mail",
+   "arrival": "Arrivée",
+   "departure": "Départ",
+   "guests": "Voyageurs",
+   "message": "Message",
+   "send": "Envoyer la demande",
+   "wa": "Écrire sur WhatsApp",
+   "sent": "Merci, votre demande est envoyée. Nous vous répondons vite.",
+   "fail": "L’envoi a échoué. Écrivez-nous sur WhatsApp.",
+   "wa_hi": "Bonjour, je suis",
+   "nearby": "À pied",
+   "reg": "N° d’enregistrement",
+   "notes": "Bon à savoir",
+   "pricing": "Tarifs",
+   "pn": "/ nuit",
+   "minstay": "Séjour min.",
+   "nts": "nuits",
+   "other": "Autres dates",
+   "disc": "Dès {n} nuits : −{p} %",
+   "total": "Total estimé",
+   "minmsg": "Séjour minimum : {n} nuits.",
+   "est": "Estimation : le tarif final est confirmé par le propriétaire.",
+   "faq": "FAQ",
+   "close": "Fermer",
+   "lg_title": "Mentions légales",
+   "lg_ed": "Éditeur du site",
+   "lg_tel": "Tél.",
+   "lg_host": "Hébergement",
+   "lg_design": "Conception du site",
+   "lg_by": "Site créé par",
+   "lg_data": "Données personnelles",
+   "lg_data_t": "Les informations saisies dans le formulaire de contact (nom, e-mail, dates, message) sont utilisées uniquement pour répondre à votre demande. Elles transitent par un service tiers d’envoi de formulaires. Ce site n’utilise ni cookies publicitaires ni suivi. La carte (OpenStreetMap) et les polices (Google Fonts) sont chargées depuis des services externes, qui peuvent recevoir votre adresse IP. Vous pouvez demander l’accès, la rectification ou la suppression de vos données en écrivant à l’adresse e-mail de l’éditeur. Le site compte anonymement le nombre de visites (aucun cookie, aucune donnée personnelle).",
+   "lg_ip": "Propriété intellectuelle",
+   "lg_ip_t": "Les photos, textes et la conception de ce site sont protégés par le droit d’auteur. Toute reproduction sans autorisation est interdite.",
+   "phone": "Téléphone",
+   "pets": "Animal de compagnie",
+   "petsno": "Non",
+   "petsyes": "Oui",
+   "consent": "J’accepte que mes données servent à traiter ma demande (voir les mentions légales).",
+   "nopay": "Aucun paiement maintenant : le propriétaire vous répond pour confirmer et vous envoie les moyens de paiement.",
+   "needdates": "Choisissez vos dates d’arrivée et de départ.",
+   "discover": "Découvrir les Vosges",
+   "more": "En savoir plus",
+   "promo": "Code promo (facultatif)",
+   "apply": "Appliquer",
+   "promo_ok": "Code appliqué : −{v}",
+   "promo_bad": "Code promo invalide ou expiré.",
+   "elec": "Électricité estimée",
+   "elecnote": "Électricité non incluse : réglée sur place selon le compteur (environ {p} € par nuit en moyenne)."
+  },
+  "en": {
+   "about": "The apartment",
+   "gallery": "Gallery",
+   "amenities": "Amenities",
+   "availability": "Availability",
+   "map": "The area",
+   "reviews": "Reviews",
+   "contact": "Book",
+   "cta": "Request a booking",
+   "cta2": "View the gallery",
+   "hero_sub": "Garden-level apartment in the heart of Gérardmer, with a covered terrace and sauna.",
+   "hint": "Tap your arrival, then your departure.",
+   "busy": "Some of these nights are not free.",
+   "free": "Free",
+   "taken": "Booked",
+   "name": "Name",
+   "email": "Email",
+   "arrival": "Arrival",
+   "departure": "Departure",
+   "guests": "Guests",
+   "message": "Message",
+   "send": "Send request",
+   "wa": "Message on WhatsApp",
+   "sent": "Thank you, your request has been sent. We will reply soon.",
+   "fail": "Sending failed. Please message us on WhatsApp.",
+   "wa_hi": "Hello, I am",
+   "nearby": "On foot",
+   "reg": "Registration no.",
+   "notes": "Good to know",
+   "pricing": "Rates",
+   "pn": "/ night",
+   "minstay": "Min. stay",
+   "nts": "nights",
+   "other": "Other dates",
+   "disc": "From {n} nights: −{p}%",
+   "total": "Estimated total",
+   "minmsg": "Minimum stay: {n} nights.",
+   "est": "Estimate: the final price is confirmed by the owner.",
+   "faq": "FAQ",
+   "close": "Close",
+   "lg_title": "Legal notice",
+   "lg_ed": "Site publisher",
+   "lg_tel": "Tel.",
+   "lg_host": "Hosting",
+   "lg_design": "Website design",
+   "lg_by": "Website created by",
+   "lg_data": "Personal data",
+   "lg_data_t": "The information entered in the contact form (name, email, dates, message) is used only to answer your request. It passes through a third-party form service. This site uses no advertising cookies or tracking. The map (OpenStreetMap) and fonts (Google Fonts) are loaded from external services, which may receive your IP address. You may request access to, correction or deletion of your data by writing to the publisher’s email address. The site counts visits anonymously (no cookies, no personal data).",
+   "lg_ip": "Intellectual property",
+   "lg_ip_t": "The photos, texts and design of this site are protected by copyright. Any reproduction without permission is prohibited.",
+   "phone": "Phone",
+   "pets": "Pet",
+   "petsno": "No",
+   "petsyes": "Yes",
+   "consent": "I agree that my data is used to process my request (see the legal notice).",
+   "nopay": "No payment now: the owner will reply to confirm and send you the payment methods.",
+   "needdates": "Please choose your arrival and departure dates.",
+   "discover": "Discover the Vosges",
+   "more": "Learn more",
+   "promo": "Promo code (optional)",
+   "apply": "Apply",
+   "promo_ok": "Code applied: −{v}",
+   "promo_bad": "Invalid or expired promo code.",
+   "elec": "Estimated electricity",
+   "elecnote": "Electricity is not included: paid on site according to the meter (about €{p} per night on average)."
+  },
+  "de": {
+   "about": "Die Wohnung",
+   "gallery": "Galerie",
+   "amenities": "Ausstattung",
+   "availability": "Verfügbarkeit",
+   "map": "Die Umgebung",
+   "reviews": "Bewertungen",
+   "contact": "Anfragen",
+   "cta": "Buchung anfragen",
+   "cta2": "Galerie ansehen",
+   "hero_sub": "Gartengeschoss-Wohnung im Herzen von Gérardmer, mit überdachter Terrasse und Sauna.",
+   "hint": "Tippen Sie auf An- und Abreisetag.",
+   "busy": "Nicht alle Nächte sind frei.",
+   "free": "Frei",
+   "taken": "Belegt",
+   "name": "Name",
+   "email": "E-Mail",
+   "arrival": "Anreise",
+   "departure": "Abreise",
+   "guests": "Gäste",
+   "message": "Nachricht",
+   "send": "Anfrage senden",
+   "wa": "Per WhatsApp schreiben",
+   "sent": "Danke, Ihre Anfrage wurde gesendet. Wir antworten bald.",
+   "fail": "Senden fehlgeschlagen. Schreiben Sie uns per WhatsApp.",
+   "wa_hi": "Guten Tag, ich bin",
+   "nearby": "Zu Fuß",
+   "reg": "Registrierungsnr.",
+   "notes": "Gut zu wissen",
+   "pricing": "Preise",
+   "pn": "/ Nacht",
+   "minstay": "Mindestaufenthalt",
+   "nts": "Nächte",
+   "other": "Andere Termine",
+   "disc": "Ab {n} Nächten: −{p} %",
+   "total": "Geschätzter Gesamtpreis",
+   "minmsg": "Mindestaufenthalt: {n} Nächte.",
+   "est": "Schätzung: Der Endpreis wird vom Eigentümer bestätigt.",
+   "faq": "FAQ",
+   "close": "Schließen",
+   "lg_title": "Impressum",
+   "lg_ed": "Herausgeber der Website",
+   "lg_tel": "Tel.",
+   "lg_host": "Hosting",
+   "lg_design": "Gestaltung der Website",
+   "lg_by": "Website erstellt von",
+   "lg_data": "Personenbezogene Daten",
+   "lg_data_t": "Die im Kontaktformular eingegebenen Angaben (Name, E-Mail, Daten, Nachricht) werden nur zur Beantwortung Ihrer Anfrage verwendet. Sie laufen über einen externen Formulardienst. Diese Website verwendet weder Werbe-Cookies noch Tracking. Die Karte (OpenStreetMap) und die Schriften (Google Fonts) werden von externen Diensten geladen, die Ihre IP-Adresse erhalten können. Auskunft, Berichtigung oder Löschung Ihrer Daten können Sie per E-Mail an den Herausgeber verlangen. Die Website zählt Besuche anonym (keine Cookies, keine personenbezogenen Daten).",
+   "lg_ip": "Urheberrecht",
+   "lg_ip_t": "Die Fotos, Texte und die Gestaltung dieser Website sind urheberrechtlich geschützt. Jede Vervielfältigung ohne Genehmigung ist untersagt.",
+   "phone": "Telefon",
+   "pets": "Haustier",
+   "petsno": "Nein",
+   "petsyes": "Ja",
+   "consent": "Ich bin damit einverstanden, dass meine Daten zur Bearbeitung meiner Anfrage verwendet werden (siehe Impressum).",
+   "nopay": "Jetzt keine Zahlung: Der Eigentümer antwortet Ihnen zur Bestätigung und sendet Ihnen die Zahlungsmöglichkeiten.",
+   "needdates": "Bitte wählen Sie An- und Abreisedatum.",
+   "discover": "Die Vogesen entdecken",
+   "more": "Mehr erfahren",
+   "promo": "Promo-Code (optional)",
+   "apply": "Anwenden",
+   "promo_ok": "Code angewendet: −{v}",
+   "promo_bad": "Ungültiger oder abgelaufener Promo-Code.",
+   "elec": "Geschätzter Strom",
+   "elecnote": "Strom nicht inbegriffen: wird vor Ort nach Zähler bezahlt (durchschnittlich etwa {p} € pro Nacht)."
+  }
+ },
+ "chapters": [
+  {
+   "src": "photos/exterieur.jpg",
+   "title": [
+    "Le chalet",
+    "The chalet",
+    "Das Chalet"
+   ],
+   "text": [
+    "Au cœur de Gérardmer, à 10 minutes à pied du lac.",
+    "In the heart of Gérardmer, a 10-minute walk from the lake.",
+    "Im Herzen von Gérardmer, 10 Gehminuten vom See."
+   ]
+  },
+  {
+   "src": "photos/terrasse.jpg",
+   "title": [
+    "La terrasse",
+    "The terrace",
+    "Die Terrasse"
+   ],
+   "text": [
+    "Couverte, avec jardin, barbecue et chaises longues.",
+    "Covered, with garden, barbecue and sun loungers.",
+    "Überdacht, mit Garten, Grill und Liegestühlen."
+   ]
+  },
+  {
+   "src": "photos/salon.jpg",
+   "title": [
+    "Le salon",
+    "The living room",
+    "Das Wohnzimmer"
+   ],
+   "text": [
+    "Cuisine ouverte, bois clair et baies vitrées sur le jardin.",
+    "Open kitchen, light wood and glass doors onto the garden.",
+    "Offene Küche, helles Holz und Glastüren zum Garten."
+   ]
+  },
+  {
+   "src": "photos/chambre-double.jpg",
+   "title": [
+    "Les chambres",
+    "The bedrooms",
+    "Die Schlafzimmer"
+   ],
+   "text": [
+    "Un lit double 160×200 et une chambre avec deux lits simples.",
+    "A 160×200 double bed and a room with two single beds.",
+    "Ein Doppelbett 160×200 und ein Zimmer mit zwei Einzelbetten."
+   ]
+  },
+  {
+   "src": "photos/sauna.jpg",
+   "title": [
+    "Le sauna",
+    "The sauna",
+    "Die Sauna"
+   ],
+   "text": [
+    "Sauna privé et salle de douche, pour se détendre après la journée.",
+    "Private sauna and shower room, to unwind after the day.",
+    "Private Sauna und Duschbad zum Entspannen nach dem Tag."
+   ]
+  },
+  {
+   "src": "photos/neige.jpg",
+   "title": [
+    "L’hiver",
+    "Winter",
+    "Der Winter"
+   ],
+   "text": [
+    "Les Vosges en hiver, pour la randonnée et le ski.",
+    "The Vosges in winter, for hiking and skiing.",
+    "Die Vogesen im Winter, zum Wandern und Skifahren."
+   ]
+  }
+ ],
+ "pricing": {
+  "base": 0,
+  "minNights": 2,
+  "seasons": [],
+  "discounts": [],
+  "note": [
+   "",
+   "",
+   ""
+  ],
+  "kwhPrice": 0.25,
+  "kwhPerNight": 0
+ },
+ "cal": {},
+ "faq": [
+  {
+   "q": [
+    "Comment réserver ?",
+    "How do I book?",
+    "Wie buche ich?"
+   ],
+   "a": [
+    "Choisissez vos dates dans le calendrier, puis envoyez votre demande par le formulaire ou par WhatsApp. Le propriétaire vous répond pour confirmer la disponibilité et le tarif.",
+    "Choose your dates in the calendar, then send your request through the form or on WhatsApp. The owner will reply to confirm availability and the rate.",
+    "Wählen Sie Ihre Daten im Kalender und senden Sie Ihre Anfrage über das Formular oder per WhatsApp. Der Eigentümer bestätigt Ihnen Verfügbarkeit und Preis."
+   ]
+  },
+  {
+   "q": [
+    "Le linge de lit et les serviettes sont-ils fournis ?",
+    "Are bed linen and towels provided?",
+    "Sind Bettwäsche und Handtücher inklusive?"
+   ],
+   "a": [
+    "Oui. Les lits sont faits avant votre arrivée, et des draps de bain et des serviettes sont fournis pour chaque voyageur.",
+    "Yes. Beds are made before you arrive, and bath sheets and towels are provided for each guest.",
+    "Ja. Die Betten sind vor Ihrer Ankunft bezogen, und für jeden Gast sind Bade- und Handtücher vorhanden."
+   ]
+  },
+  {
+   "q": [
+    "Le ménage de fin de séjour est-il inclus ?",
+    "Is end-of-stay cleaning included?",
+    "Ist die Endreinigung inklusive?"
+   ],
+   "a": [
+    "Oui, le ménage de fin de séjour est inclus.",
+    "Yes, end-of-stay cleaning is included.",
+    "Ja, die Endreinigung ist inklusive."
+   ]
+  },
+  {
+   "q": [
+    "Comment est facturée l’électricité ?",
+    "How is electricity charged?",
+    "Wie wird der Strom abgerechnet?"
+   ],
+   "a": [
+    "L’électricité est réglée sur place à 0,25 € par kWh, d’après le relevé du compteur.",
+    "Electricity is paid on site at €0.25 per kWh, based on the meter reading.",
+    "Der Strom wird vor Ort mit 0,25 € pro kWh nach Zählerstand bezahlt."
+   ]
+  },
+  {
+   "q": [
+    "Comment se passe l’arrivée ?",
+    "How does arrival work?",
+    "Wie läuft die Anreise ab?"
+   ],
+   "a": [
+    "L’accueil et la remise des clés sont assurés par le propriétaire ou la conciergerie.",
+    "The owner or the concierge service welcomes you and hands over the keys.",
+    "Der Eigentümer oder der Concierge-Service empfängt Sie und übergibt die Schlüssel."
+   ]
+  },
+  {
+   "q": [
+    "Peut-on louer du samedi au samedi ?",
+    "Can I rent from Saturday to Saturday?",
+    "Kann ich von Samstag bis Samstag mieten?"
+   ],
+   "a": [
+    "En été, le logement se loue du samedi au samedi ou du dimanche au dimanche.",
+    "In summer, the apartment is rented Saturday to Saturday or Sunday to Sunday.",
+    "Im Sommer wird die Wohnung von Samstag bis Samstag oder von Sonntag bis Sonntag vermietet."
+   ]
+  },
+  {
+   "q": [
+    "Avez-vous du matériel pour les bébés ?",
+    "Do you have baby equipment?",
+    "Gibt es Ausstattung für Babys?"
+   ],
+   "a": [
+    "Un lit parapluie et une chaise haute sont disponibles sur demande, et une baignoire pour bébé est à disposition dans la salle de bain.",
+    "A travel cot and a high chair are available on request, and a baby bath is provided in the bathroom.",
+    "Ein Reisebett und ein Hochstuhl sind auf Anfrage erhältlich, und im Bad steht eine Babybadewanne bereit."
+   ]
+  },
+  {
+   "q": [
+    "Le lac et les commerces sont-ils loin ?",
+    "Are the lake and shops far away?",
+    "Sind See und Geschäfte weit entfernt?"
+   ],
+   "a": [
+    "Le lac de Gérardmer est à environ 10 minutes à pied. Boulangeries et commerces se trouvent à environ 400 m.",
+    "Lake Gérardmer is about a 10-minute walk away. Bakeries and shops are about 400 m away.",
+    "Der See von Gérardmer ist etwa 10 Gehminuten entfernt. Bäckereien und Geschäfte liegen ca. 400 m entfernt."
+   ]
+  }
+ ],
+ "credit": {
+  "name": "Samuel Limaux Design",
+  "url": ""
+ },
+ "legal": {
+  "owner": "",
+  "address": "",
+  "phone": "",
+  "siret": "",
+  "host": "GitHub, Inc.",
+  "hostAddr": "88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis",
+  "extra": [
+   "",
+   "",
+   ""
+  ]
+ },
+ "discover": [
+  {
+   "title": [
+    "Le lac de Gérardmer",
+    "Lake Gérardmer",
+    "Der See von Gérardmer"
+   ],
+   "text": [
+    "Le plus grand lac naturel des Vosges : tour du lac à pied ou à vélo, promenades au bord de l’eau et, l’été, activités nautiques.",
+    "The largest natural lake in the Vosges: walk or cycle around the lake, stroll along the water and, in summer, enjoy water activities.",
+    "Der größte natürliche See der Vogesen: Rundweg zu Fuß oder mit dem Rad, Spaziergänge am Wasser und im Sommer Wassersport."
+   ],
+   "url": ""
+  },
+  {
+   "title": [
+    "Le Saut des Cuves",
+    "Le Saut des Cuves waterfall",
+    "Der Wasserfall Saut des Cuves"
+   ],
+   "text": [
+    "Une cascade spectaculaire dans les bois de Gérardmer, accessible par un sentier de promenade.",
+    "A spectacular waterfall in the woods of Gérardmer, reached by a walking path.",
+    "Ein beeindruckender Wasserfall in den Wäldern von Gérardmer, über einen Spazierweg erreichbar."
+   ],
+   "url": ""
+  },
+  {
+   "title": [
+    "Randonnées dans les Hautes-Vosges",
+    "Hiking in the High Vosges",
+    "Wandern in den Hochvogesen"
+   ],
+   "text": [
+    "Forêts, crêtes et sentiers balisés pour tous les niveaux, du printemps à l’automne, et sentiers enneigés en hiver.",
+    "Forests, ridges and marked trails for all levels, from spring to autumn, and snowy paths in winter.",
+    "Wälder, Höhenzüge und markierte Wege für jedes Niveau, von Frühling bis Herbst, im Winter verschneite Pfade."
+   ],
+   "url": ""
+  },
+  {
+   "title": [
+    "Ski et sports d’hiver",
+    "Skiing and winter sports",
+    "Ski und Wintersport"
+   ],
+   "text": [
+    "En hiver, le domaine skiable de Gérardmer, le ski de fond et les balades en forêt enneigée.",
+    "In winter, the Gérardmer ski area, cross-country skiing and walks in the snowy forest.",
+    "Im Winter: das Skigebiet von Gérardmer, Langlauf und Spaziergänge im verschneiten Wald."
+   ],
+   "url": ""
+  }
+ ]
+}
