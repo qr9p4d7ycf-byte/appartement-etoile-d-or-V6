@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Administration</title>
+<style>
+:root{--bg:#0b100e;--bg2:#131b17;--ink:#efe8d8;--muted:#a9a392;--gold:#c9a45c;--line:#ffffff1f}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 system-ui,-apple-system,sans-serif;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+h1,h2{font-family:Georgia,serif;font-weight:400}
+h1{font-size:1.6rem;color:var(--gold)}h2{font-size:1.3rem;margin:26px 0 10px}
+.wrap{max-width:760px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px}
+label{display:grid;gap:4px;font-size:.85rem;color:var(--muted);margin-bottom:12px}
+input,textarea,select{width:100%;background:var(--bg2);color:var(--ink);border:1px solid var(--line);padding:12px;font:inherit;font-size:16px;border-radius:8px}
+textarea{min-height:90px}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--gold);background:none;color:var(--ink);padding:10px 16px}
+button.p{background:var(--gold);color:#111;font-weight:600}
+button.s{padding:6px 11px;border-color:var(--line)}
+.tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;border-bottom:1px solid var(--line)}
+.tabs button{white-space:nowrap}.tabs .on{background:var(--gold);color:#111}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#ffffff06}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.l3{display:grid;gap:8px}
+.l3 label{margin:0}
+.th{width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-bottom:10px;background:var(--bg2)}
+.bar{position:fixed;inset:auto 0 0;background:var(--bg);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;gap:12px;align-items:center;z-index:9}
+.bar span{flex:1;font-size:.9rem;color:var(--muted)}
+.ok{color:#8fd19e!important}.err{color:#ff8c8c!important}
+details{margin:12px 0;color:var(--muted);font-size:.9rem}summary{cursor:pointer;color:var(--gold)}
+ol{padding-left:20px;margin-top:8px}
+.kg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
+.kl{color:var(--muted);font-size:.8rem}.kv{font:400 1.6rem Georgia,serif;color:var(--gold)}
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.badge{background:var(--gold);color:#111;border-radius:99px;padding:0 8px;font-size:.75rem;font-weight:600;margin-left:6px}
+.attn{border-color:var(--gold)}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+@media(min-width:620px){.kg{grid-template-columns:repeat(4,1fr)}.sg{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const $=s=>document.querySelector(s),enc=new TextEncoder();
+const b64=s=>btoa(unescape(encodeURIComponent(s))),ub64=s=>decodeURIComponent(escape(atob(s.replace(/\s/g,''))));
+const tb=a=>btoa(String.fromCharCode(...a)),fb=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const rt=(o,p)=>p[0]=='@'?[BK,p.slice(1)]:[o,p],P=(o,p)=>{[o,p]=rt(o,p);return p.split('.').reduce((a,k)=>a?.[k],o)},SET=(o,p,v)=>{[o,p]=rt(o,p);const k=p.split('.'),l=k.pop();k.reduce((a,x)=>a[x],o)[l]=v};
+const NAMES={hero:'Accueil',pricing:'Tarifs',discover:'Découvrir',faq:'FAQ',about:'Appartement',gallery:'Galerie',amenities:'Équipements',availability:'Disponibilités',map:'Quartier',reviews:'Avis',contact:'Réserver'};
+let C,cfg,sha,tab='home',dirty=false,bust=Date.now();
+
+async function key(code,salt){const m=await crypto.subtle.importKey('raw',enc.encode(code),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:200000,hash:'SHA-256'},m,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function seal(code,obj){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),k=await key(code,salt);
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},k,enc.encode(JSON.stringify(obj))));
+  localStorage.setItem('adm',JSON.stringify({s:tb(salt),i:tb(iv),c:tb(ct)}))}
+async function unseal(code){const o=JSON.parse(localStorage.getItem('adm')),k=await key(code,fb(o.s));
+  return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:fb(o.i)},k,fb(o.c))))}
+const gh=(p,o={})=>fetch(`https://api.github.com/repos/${cfg.repo}${p}`,{...o,headers:{Authorization:'Bearer '+cfg.token,Accept:'application/vnd.github+json','Content-Type':'application/json'}});
+const api=(p,o={})=>gh('/contents/'+p,o);
+const NEED='Droit manquant : ajoutez « Secrets » et « Actions » (Read and write) à votre clé GitHub.';
+async function sod(){if(!window.sodium){await new Promise((ok,ko)=>{const s=document.createElement('script');s.src='libs/sodium.js';s.onload=ok;s.onerror=()=>ko(new Error('libs/sodium.js introuvable : ajoutez le dossier libs au dépôt.'));document.head.appendChild(s)})}await sodium.ready;return sodium}
+async function setSecret(n,v){const S=await sod(),r=await gh('/actions/secrets/public-key');if(!r.ok)throw new Error(NEED);const k=await r.json(),B=S.base64_variants.ORIGINAL;
+  const e=S.to_base64(S.crypto_box_seal(S.from_string(v),S.from_base64(k.key,B)),B);
+  const w=await gh('/actions/secrets/'+n,{method:'PUT',body:JSON.stringify({encrypted_value:e,key_id:k.key_id})});if(!w.ok)throw new Error(NEED)}
+async function calSave(k){const v=$('#u_'+k).value.trim();if(!/^https:\/\/\S+$/.test(v))return st('Collez un lien commençant par https://','err');
+  try{st('Enregistrement du lien…');await setSecret('ICAL_'+k.toUpperCase(),v);C.cal[k]=true;await save();render();await sync(1)}catch(e){st(e.message,'err')}}
+async function calDel(k){if(!confirm('Déconnecter ce calendrier ?'))return;try{const r=await gh('/actions/secrets/ICAL_'+k.toUpperCase(),{method:'DELETE'});if(!r.ok&&r.status!=404)throw new Error(NEED);C.cal[k]=false;await save();render()}catch(e){st(e.message,'err')}}
+async function sync(q){try{const rp=await(await gh('')).json(),r=await gh('/actions/workflows/sync-calendar.yml/dispatches',{method:'POST',body:JSON.stringify({ref:rp.default_branch})});if(!r.ok)throw new Error(NEED);st(q?'Lien enregistré. Synchronisation lancée (1 à 2 minutes).':'Synchronisation lancée : actualisez dans 1 à 2 minutes.','ok')}catch(e){st(e.message,'err')}}
+async function calStatus(){const e=$('#sync');try{const r=await api('availability.json');if(!r.ok)throw 0;const v=JSON.parse(ub64((await r.json()).content));e.textContent=v.updated?`Dernière synchronisation : ${new Date(v.updated).toLocaleString('fr-FR')} · ${v.booked.length} nuits occupées`:'Pas encore synchronisé.'}catch(x){e.textContent='État indisponible.'}}
+const yr=s=>s?(+s.slice(0,4)+1)+s.slice(4):'';
+let code0='',R=null,TP=null,dec=null,tlang='fr',rerr='',BK=null,bdirty=false,STD=null;
+const ST={nouvelle:'Nouvelle',acceptee:'Acceptée',refusee:'Refusée'};
+const SUBJ={accept:{fr:'Votre demande est acceptée',en:'Your request is accepted',de:'Ihre Anfrage wurde angenommen'},decline:{fr:'Votre demande de séjour',en:'Your stay request',de:'Ihre Aufenthaltsanfrage'}};
+const fd=(s,l)=>s?new Date(s+'T12:00').toLocaleDateString(l||'fr-FR',{day:'numeric',month:'long',year:'numeric'}):'';
+const fill=(t,r)=>String(t||'').replace(/\{(\w+)\}/g,(m,k)=>{const v=({prenom:String(r.nom).split(' ')[0],nom:r.nom,arrivee:fd(r.arrivee,r.langue),depart:fd(r.depart,r.langue),nuits:r.nuits,personnes:r.personnes,animal:r.animal,total:r.estimation||'—',site:C.site.name})[k];return v==null?m:v});
+const bk=async o=>(await fetch(C.site.bookingEndpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...o,key:cfg.key})})).json();
+async function resaLoad(){
+  rerr='';if(!C.site.bookingEndpoint||!cfg.key){render();return}
+  try{const j=await bk({action:'list'});if(!j.ok){if(j.error=='auth'){cfg.key='';await seal(code0,cfg);throw new Error('Clé administrateur incorrecte : saisissez-la de nouveau.')}throw new Error('Erreur du service de réservation.')}
+    R=j.items;if(!TP)TP=(await bk({action:'getTemplates'})).templates}
+  catch(e){R=R||[];rerr=e.message||'Impossible de joindre le service de réservation.'}
+  render();
+}
+const pad2=n=>String(n).padStart(2,'0'),dIso=d=>d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+const nightsOf=(x,y)=>{const o=[];for(const d=new Date(x+'T12:00'),e=new Date(y+'T12:00');d<e;d.setDate(d.getDate()+1))o.push(dIso(d));return o};
+const num=s=>{const m=String(s||'').match(/\d+(?:[.,]\d+)?/);return m?parseFloat(m[0].replace(',','.')):0};
+const pn=d=>{const P=C.pricing,s=(P.seasons||[]).find(s=>s.from&&s.to&&d>=s.from&&d<=s.to);return s&&+s.price>0?+s.price:+P.base||0};
+const months=()=>{const n=new Date(),o=[];for(let i=-5;i<=6;i++){const d=new Date(n.getFullYear(),n.getMonth()+i,1);o.push(d.getFullYear()+'-'+pad2(d.getMonth()+1))}return o};
+const MN=m=>{const [y,mo]=m.split('-');return new Date(+y,mo-1,1).toLocaleDateString('fr-FR',{month:'short',year:'2-digit'})};
+async function statsLoad(){
+  if(!C.site.bookingEndpoint||!cfg.key)return render();
+  try{const [s,l,v]=await Promise.all([bk({action:'stats'}),bk({action:'list'}),api('availability.json')]);
+    if(!s.ok||!l.ok)throw 0;R=l.items;let av={booked:[],stays:[]};if(v.ok)av=JSON.parse(ub64((await v.json()).content));STD={days:s.days||{},av};rerr=''}
+  catch(e){STD=null;rerr='Impossible de charger les statistiques (avez-vous redéployé le script ?).'}
+  render();
+}
+function calc(){   // une nuit n'est comptée qu'une fois : direct > Airbnb > Booking > bloquée
+  const N={},add=(d,src,rev)=>{if(!N[d])N[d]={src,rev}};
+  (R||[]).filter(r=>r.statut=='acceptee'&&+r.nuits>0).forEach(r=>{const p=num(r.estimation)/+r.nuits;nightsOf(r.arrivee,r.depart).forEach(d=>add(d,'direct',p))});
+  ['airbnb','booking'].forEach(s=>(STD.av.stays||[]).filter(x=>x.s==s&&x.k=='res').forEach(x=>nightsOf(x.a,x.b).forEach(d=>add(d,s,pn(d)))));
+  (STD.av.booked||[]).forEach(d=>add(d,'blocked',0));
+  return N;
+}
+function monthRows(N){return months().map(m=>{
+  const [y,mo]=m.split('-').map(Number),dm=new Date(y,mo,0).getDate(),o={m,dm,direct:0,airbnb:0,booking:0,blocked:0,rv:{direct:0,airbnb:0,booking:0},real:{}};
+  for(let i=1;i<=dm;i++){const x=N[m+'-'+pad2(i)];if(!x)continue;o[x.src]++;if(x.src!='blocked')o.rv[x.src]+=x.rev}
+  const rl=(BK.rev||{})[m]||{};['airbnb','booking'].forEach(s=>{if(rl[s]!==''&&rl[s]!=null&&!isNaN(+rl[s])){o.rv[s]=+rl[s];o.real[s]=1}});
+  o.occ=o.direct+o.airbnb+o.booking;o.pct=Math.round(100*o.occ/dm);o.ca=o.rv.direct+o.rv.airbnb+o.rv.booking;return o})}
+const eur=v=>Math.round(v).toLocaleString('fr-FR')+' €';
+async function bkLoad(){
+  if(!C.site.bookingEndpoint||!cfg.key)return render();
+  try{const j=await bk({action:'getConfig'});if(!j.ok)throw 0;BK={promos:j.promos,auto:j.auto,uses:j.uses||{},rev:j.rev||{}};bdirty=false}
+  catch(e){BK=null;rerr='Impossible de charger la configuration (avez-vous redéployé le script ?).'}
+  render();
+}
+async function bkSave(action,key){try{const j=await bk({action,[key]:BK[key]});if(!j.ok)throw 0;bdirty=false;st('Enregistré.','ok')}catch(e){st('Échec de l’enregistrement.','err')}}
+async function bkAct(o,okMsg){
+  if(bdirty)return st('Enregistrez d’abord vos modifications.','err');
+  st('…');try{const j=await bk(o);if(!j.ok)throw 0;st(typeof j.sent=='number'?j.sent+' e-mail(s) envoyé(s).':okMsg,'ok')}catch(e){st('Échec : redéployez le script et autorisez ses nouvelles permissions.','err')}
+}
+const SEL=(lab,p,opts)=>`<label>${lab}<select data-p="${p}">${opts.map(([v,l])=>`<option value="${v}" ${String(P(C,p))==v?'selected':''}>${l}</option>`).join('')}</select></label>`;
+const need=()=>(!C.site.bookingEndpoint||!cfg.key)?'<h2>Configuration</h2><p style="color:var(--muted)">Configurez d’abord l’onglet Réservations.</p>':(BK?'':`<h2>Chargement…</h2>${rerr?`<p class=err>${esc(rerr)}</p>`:''}`);
+async function saveKey(){const k=$('#adminkey').value.trim();if(k.length<8)return st('Clé trop courte.','err');cfg.key=k;await seal(code0,cfg);await resaLoad()}
+function card(r){const c=r.statut=='acceptee'?'ok':r.statut=='refusee'?'err':'';
+  return `<div class=card><b>${esc(r.nom)}</b> · <span class="${c}">${ST[r.statut]||esc(r.statut)}</span>
+  <div style="color:var(--muted);font-size:.9rem;margin:6px 0">${fd(r.arrivee)} → ${fd(r.depart)} · ${esc(r.nuits)} nuits · ${esc(r.personnes)} pers. · animal : ${esc(r.animal)||'—'}${r.estimation?' · '+esc(r.estimation):''}</div>
+  <div>${esc(r.email)}${r.telephone?' · '+esc(r.telephone):''}</div>${r.code?`<div style="color:var(--gold)">Code promo : ${esc(r.code)} (${esc(r.remise)})</div>`:''}${r.message?`<p style="margin-top:8px">${esc(r.message)}</p>`:''}
+  ${r.statut=='nouvelle'?`<div class=row><button class=p data-a=accept data-id="${esc(r.id)}">Accepter</button><button data-a=decline data-id="${esc(r.id)}">Refuser</button></div>`:''}</div>`}
+function composer(){const r=R.find(x=>x.id==dec.id);if(!r)return'';const l=r.langue||'fr',T=(TP||{})[dec.type]||{},S=SUBJ[dec.type];
+  return `<div class=card style="border-color:var(--gold)"><b>${dec.type=='accept'?'Accepter':'Refuser'} la demande de ${esc(r.nom)}</b>
+  <label style="margin-top:10px">Objet<input id=dsub value="${esc((S[l]||S.fr)+' – '+C.site.name)}"></label>
+  <label>Message envoyé à ${esc(r.email)}<textarea id=dbody style="min-height:280px">${esc(fill(T[l]||T.fr,r))}</textarea></label>
+  <div class=row><button class=p data-a=sendmail>Envoyer l’e-mail</button><button class=s data-a=cancelmail>Annuler</button></div></div>`}
+async function sendMail(force){
+  st('Envoi…');
+  try{const j=await bk({action:'decide',id:dec.id,decision:dec.type=='accept'?'accepted':'declined',subject:$('#dsub').value,body:$('#dbody').value,force:!!force});
+    if(j.error=='overlap'){if(confirm('Ces dates chevauchent une réservation déjà acceptée. Accepter quand même ?'))return sendMail(true);return st('Envoi annulé.')}
+    if(!j.ok)throw new Error('Échec de l’envoi de l’e-mail.');dec=null;await resaLoad();st('E-mail envoyé.','ok')}
+  catch(e){st(e.message||'Échec de l’envoi.','err')}
+}
+function tplHtml(){if(!TP)return'';
+  return `<details open style="margin-top:22px"><summary>Modèles d’e-mails</summary><p style="color:var(--muted)">Variables : {prenom} {nom} {arrivee} {depart} {nuits} {personnes} {animal} {total} {site}. Complétez vos moyens de paiement dans le modèle « acceptation ».</p>
+  <div class=row>${['fr','en','de'].map(l=>`<button class="s${l==tlang?' p':''}" data-tl=${l}>${l.toUpperCase()}</button>`).join('')}</div>
+  <label style="margin-top:10px">Acceptation<textarea id=t_accept style="min-height:230px">${esc((TP.accept||{})[tlang])}</textarea></label>
+  <label>Refus<textarea id=t_decline style="min-height:170px">${esc((TP.decline||{})[tlang])}</textarea></label><button class=p data-a=savetpl>Enregistrer les modèles</button></details>`}
+function tplSync(){if(!$('#t_accept'))return;TP.accept[tlang]=$('#t_accept').value;TP.decline[tlang]=$('#t_decline').value}
+async function saveTpl(){tplSync();try{const j=await bk({action:'saveTemplates',templates:TP});if(!j.ok)throw 0;st('Modèles enregistrés.','ok')}catch(e){st('Échec de l’enregistrement des modèles.','err')}}
+
+function guess(){const h=location.hostname,o=h.split('.')[0],s=location.pathname.split('/')[1];return h.endsWith('github.io')?`${o}/${s&&s!='admin.html'?s:o+'.github.io'}`:''}
+function login(msg=''){
+  const has=localStorage.getItem('adm');
+  $('#root').innerHTML=`<div class=wrap><h1>Administration</h1><p style="color:var(--muted);margin:6px 0 20px">Chalet l’étoile d’or</p>
+  ${has?`<label>Votre code<input id=code type=password autocomplete=current-password autofocus></label>
+  <div class=row><button class=p data-a=in>Entrer</button><button class=s data-a=forget>Oublier cet appareil</button></div>`
+  :`<p style="margin-bottom:14px">Première connexion sur cet appareil.</p>
+  <label>Dépôt GitHub (nom/dépôt)<input id=repo value="${esc(guess())}" placeholder="monnom/mondepot"></label>
+  <label>Clé d’accès GitHub<input id=tok type=password placeholder="github_pat_..."></label>
+  <label>Choisissez un code (6 caractères minimum)<input id=code type=password autocomplete=new-password></label>
+  <details><summary>Comment créer la clé d’accès ?</summary><ol>
+  <li>GitHub → votre photo → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token.</li>
+  <li>Repository access : Only select repositories, puis votre dépôt.</li>
+  <li>Repository permissions → Contents : Read and write.</li>
+  <li>Expiration : 1 an. Cliquez sur Generate et copiez la clé ici.</li></ol></details>
+  <button class=p data-a=setup>Enregistrer et entrer</button>`}
+  <p id=msg class=err style="margin-top:14px">${msg}</p></div>`;
+}
+async function enter(){
+  try{
+    const code=$('#code').value;code0=code;
+    if(!localStorage.getItem('adm')){
+      const repo=$('#repo').value.trim(),token=$('#tok').value.trim();
+      if(code.length<6||!repo||!token)return login('Remplissez les trois champs (code de 6 caractères minimum).');
+      cfg={repo,token};await load();await seal(code,cfg);
+    }else{cfg=await unseal(code).catch(()=>null);if(!cfg)return login('Code incorrect.');await load()}
+    try{localStorage.setItem('nostats','1')}catch(e){}render();goTab();
+  }catch(e){localStorage.removeItem('adm');login(e.message||'Connexion impossible.')}
+}
+async function load(){
+  const r=await api('content.json');
+  if(r.status==401||r.status==403)throw new Error('Clé refusée : vérifiez la clé et ses droits (Contents : Read and write).');
+  if(!r.ok)throw new Error('Fichier content.json introuvable : vérifiez le nom du dépôt.');
+  const j=await r.json();sha=j.sha;C=JSON.parse(ub64(j.content));C.pricing=Object.assign({base:0,minNights:2,kwhPrice:0.25,kwhPerNight:0,seasons:[],discounts:[],note:['','','']},C.pricing||{});C.cal=C.cal||{};C.discover=C.discover||[];C.faq=C.faq||[];C.credit=Object.assign({name:'Samuel Limaux Design',url:''},C.credit||{});C.legal=Object.assign({owner:'',address:'',phone:'',siret:'',host:'GitHub, Inc.',hostAddr:'88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis',extra:['','','']},C.legal||{});
+}
+const F=(lab,p,t='text')=>`<label>${lab}<input type=${t} data-p="${p}" value="${esc(P(C,p))}"></label>`;
+const L3=(p,ta)=>`<div class=l3>${['FR','EN','DE'].map((l,i)=>`<label>${l}${ta?`<textarea data-p="${p}.${i}">${esc(P(C,p+'.'+i))}</textarea>`:`<input data-p="${p}.${i}" value="${esc(P(C,p+'.'+i))}">`}</label>`).join('')}</div>`;
+const CTRL=(p,i)=>`<div class=row><button class=s data-a=up data-p="${p}" data-i=${i}>↑</button><button class=s data-a=dn data-p="${p}" data-i=${i}>↓</button><button class=s data-a=del data-p="${p}" data-i=${i}>Supprimer</button></div>`;
+function LIST(p,n,add){const a=P(C,p)||[];
+  return a.map((it,i)=>`<div class=card>${[...Array(n).keys()].map(k=>k<3?`<label>${['Français','English','Deutsch'][k]}<input data-p="${p}.${i}.${k}" value="${esc(it[k])}"></label>`:`<label>Distance<input data-p="${p}.${i}.${k}" value="${esc(it[k])}"></label>`).join('')}${CTRL(p,i)}</div>`).join('')
+  +`<button data-a=add data-p="${p}" data-n=${n}>+ ${add}</button>`}
+const nbNew=()=>(R||[]).filter(r=>r.statut=='nouvelle').length;
+function goTab(){
+  if((tab=='home'||tab=='resa')&&(R===null||!TP))resaLoad();
+  if((tab=='home'||tab=='promos'||tab=='auto'||tab=='stats')&&BK===null)bkLoad();
+  if((tab=='home'||tab=='stats')&&STD===null)statsLoad();
+}
+const TABS={
+home:()=>{
+  if(!C.site.bookingEndpoint||!cfg.key)return `<h2>Tableau de bord</h2><p style="color:var(--muted);margin-bottom:12px">Pour voir vos demandes et vos chiffres ici, branchez d’abord le service de réservation.</p><button class=p data-tab=resa>Ouvrir Réservations</button>`;
+  const td=dIso(new Date()),nw=(R||[]).filter(r=>r.statut=='nouvelle'),mu='style="color:var(--muted)"';
+  const pend=R===null?`<p ${mu}>Chargement…</p>`:nw.length
+    ?nw.slice(0,3).map(r=>`<div class="card attn"><b>${esc(r.nom)}</b><div ${mu} style="color:var(--muted);font-size:.9rem;margin:4px 0">${fd(r.arrivee)} → ${fd(r.depart)} · ${esc(r.nuits)} nuits · ${esc(r.personnes)} pers.${r.estimation?' · '+esc(r.estimation):''}</div>${r.message?`<p style="font-size:.9rem">${esc(String(r.message).slice(0,140))}</p>`:''}<div class=row><button class=p data-a=accept data-id="${esc(r.id)}">Accepter</button><button data-a=decline data-id="${esc(r.id)}">Refuser</button></div></div>`).join('')+`<button class=s data-tab=resa>${nw.length>3?'Voir les '+nw.length+' demandes':'Voir toutes les demandes'}</button>`
+    :`<p ${mu}>Aucune nouvelle demande pour le moment.</p>`;
+  let kp=`<p ${mu} style="color:var(--muted);margin:12px 0">Chargement des chiffres…</p>`,up='';
+  if(BK&&STD&&R){
+    const N=calc(),rows=monthRows(N),now=rows.find(r=>r.m==td.slice(0,7)),fut=Object.keys(N).filter(d=>d>=td&&N[d].src!='blocked').length;
+    let v30=0;for(let i=0;i<30;i++){const d=new Date();d.setDate(d.getDate()-i);v30+=(STD.days[dIso(d)]||{}).v||0}
+    const K=(t,v)=>`<div class=card style="margin:0"><div class=kl>${t}</div><div class=kv>${v}</div></div>`;
+    kp=`<div class=kg>${K('Occupation ce mois',now.pct+' %')}${K('CA estimé ce mois',eur(now.ca))}${K('Nuits à venir',fut)}${K('Vues (30 jours)',v30)}</div>`;
+    const S=[...R.filter(r=>r.statut=='acceptee'&&r.depart>td).map(r=>({a:r.arrivee,b:r.depart,w:r.nom+' (direct)'})),...(STD.av.stays||[]).filter(x=>x.k=='res'&&x.b>td).map(x=>({a:x.a,b:x.b,w:x.s=='airbnb'?'Airbnb':x.s=='booking'?'Booking.com':'Autre plateforme'}))].sort((x,y)=>x.a<y.a?-1:x.a>y.a?1:0).slice(0,5);
+    up=`<h2>Prochains séjours</h2>${S.map(x=>`<div class=card style="margin-bottom:8px"><b>${fd(x.a)} → ${fd(x.b)}</b><div style="color:var(--muted);font-size:.9rem">${esc(x.w)} · ${nightsOf(x.a,x.b).length} nuits</div></div>`).join('')||`<p ${mu}>Aucun séjour à venir.</p>`}`;
+  }
+  const SC=[['stats','Statistiques'],['calendriers','Calendriers'],['tarifs','Tarifs'],['promos','Codes promo'],['auto','E-mails auto'],['photos','Photos'],['textes','Textes'],['infos','Infos']];
+  return `<div class=hd><h2 style="margin:26px 0 10px">Tableau de bord</h2><button class=s data-a=homereload>Actualiser</button></div>${rerr?`<p class=err>${esc(rerr)}</p>`:''}
+  <h2>Demandes à traiter${nw.length?`<span class=badge>${nw.length}</span>`:''}</h2>${pend}${kp}${up}
+  <h2>Accès rapide</h2><div class=sg>${SC.map(([k,n])=>`<button data-tab=${k}>${n}</button>`).join('')}</div>`},
+infos:()=>`<h2>Contact</h2>${F('Numéro WhatsApp (format +33...)','site.whatsapp')}${F('E-mail','site.email','email')}${F('Adresse du service de réservation (Apps Script)','site.bookingEndpoint')}${F('Adresse du formulaire de secours (Formspree, facultatif)','site.formEndpoint')}
+  <h2>Annonce</h2>${F('Numéro d’enregistrement','site.registration')}${F('Ville','site.city')}
+  <label>Style du site<select data-p="defaultTheme">${Object.keys(C.themes).map(t=>`<option ${t==C.defaultTheme?'selected':''}>${t}</option>`).join('')}</select></label>`,
+sections:()=>`<h2>Ordre des sections</h2>${C.sections.map((s,i)=>`<div class=card><b>${NAMES[s]||s}</b>${CTRL('sections',i).replace('Supprimer','Retirer')}</div>`).join('')}
+  <h2>Sections retirées</h2><div class=row>${Object.keys(NAMES).filter(s=>!C.sections.includes(s)).map(s=>`<button data-a=addsec data-s=${s}>+ ${NAMES[s]}</button>`).join('')||'<span style="color:var(--muted)">Aucune</span>'}</div>`,
+textes:()=>`<h2>Présentation</h2><label>Titre</label>${L3('about.title')}<label style="margin-top:12px">Texte</label>${L3('about.text',1)}
+  <h2>Points forts</h2>${LIST('about.facts',3,'Ajouter')}<h2>Équipements</h2>${LIST('amenities',3,'Ajouter un équipement')}
+  <h2>Bon à savoir</h2>${LIST('notes',3,'Ajouter une note')}<h2>Autour de l’appartement</h2>${LIST('nearby',4,'Ajouter un lieu')}`,
+photos:()=>`<h2>Photos</h2>${C.photos.map((p,i)=>`<div class=card><img class=th src="${esc(p.src)}?t=${bust}" alt="" onerror="this.style.display='none'">${L3('photos.'+i+'.alt')}
+  <div class=row><label style="margin:0">Remplacer<input type=file accept="image/*" data-rep=${i}></label></div>${CTRL('photos',i)}</div>`).join('')}
+  <label>Ajouter une photo<input type=file accept="image/*" id=newph></label>`,
+tarifs:()=>{const p=C.pricing;return `<h2>Prix de base</h2>${F('Prix par nuit (€)','pricing.base','number')}${F('Séjour minimum (nuits)','pricing.minNights','number')}
+  <h2>Électricité (estimation affichée aux visiteurs)</h2><p style="color:var(--muted);font-size:.9rem;margin-bottom:10px">Le visiteur voit une estimation selon le nombre de nuits, à titre indicatif (le règlement se fait sur place, au compteur). Laissez 0 pour ne rien afficher. Astuce : calculez votre consommation moyenne par nuit à partir des relevés de compteur de vos derniers séjours.</p>${F('Prix du kWh (€)','pricing.kwhPrice','number')}${F('Consommation moyenne par nuit (kWh)','pricing.kwhPerNight','number')}
+  <h2>Périodes</h2><p style="color:var(--muted);font-size:.9rem;margin-bottom:10px">La première période qui correspond à la nuit s’applique. Prix à 0 ou vide : le prix de base est utilisé.</p>
+  ${p.seasons.map((s,i)=>{const k='pricing.seasons.'+i;return `<div class=card><label>Nom de la période</label>${L3(k+'.name')}<div class=l3 style="margin-top:10px">${F('Du (première nuit)',k+'.from','date')}${F('Au (dernière nuit incluse)',k+'.to','date')}${F('Prix par nuit (€)',k+'.price','number')}${F('Séjour min. (nuits, 0 = séjour min. de base)',k+'.minNights','number')}${F('Électricité : kWh par nuit (0 = valeur de base)',k+'.kwh','number')}</div><div class=row><button class=s data-a=dup data-i=${i}>Copier sur l’an prochain</button></div>${CTRL('pricing.seasons',i)}</div>`}).join('')}
+  <button data-a=addseason>+ Ajouter une période</button>
+  <h2>Réductions longs séjours</h2>${p.discounts.map((d,i)=>`<div class=card><div class=l3>${F('À partir de (nuits)','pricing.discounts.'+i+'.nights','number')}${F('Réduction (%)','pricing.discounts.'+i+'.percent','number')}</div>${CTRL('pricing.discounts',i)}</div>`).join('')}
+  <button data-a=adddisc>+ Ajouter une réduction</button>
+  <h2>Note affichée sous les tarifs</h2><p style="color:var(--muted);font-size:.9rem;margin-bottom:8px">Par exemple : taxe de séjour, électricité.</p>${L3('pricing.note',1)}`},
+calendriers:()=>`<h2>Calendriers</h2><p style="color:var(--muted);margin-bottom:12px">Collez le lien d’export (iCal) de chaque plateforme. Le site n’affiche que les nuits occupées, sans aucun détail, et personne ne peut réserver dessus.</p>
+  ${['airbnb','booking'].map(k=>`<div class=card><b>${k=='airbnb'?'Airbnb':'Booking.com'}</b> <span class="${C.cal[k]?'ok':''}">${C.cal[k]?'● Connecté':'Non connecté'}</span><label style="margin-top:10px">${C.cal[k]?'Remplacer le lien':'Lien iCal'}<input id=u_${k} type=password placeholder="https://..." autocomplete=off></label><div class=row><button class=p data-a=calsave data-k=${k}>Enregistrer le lien</button>${C.cal[k]?`<button class=s data-a=caldel data-k=${k}>Déconnecter</button>`:''}</div></div>`).join('')}
+  <div class=card><div id=sync style="margin-bottom:10px;color:var(--muted)">…</div><button data-a=sync>Synchroniser maintenant</button></div>
+  <details open><summary>Éviter les doubles réservations</summary><p>Le site se met à jour toutes les heures. Pour que les deux plateformes se bloquent aussi entre elles, importez dans chacune le lien d’export de l’autre (option de synchronisation de calendrier de chaque plateforme). Une demande reçue par le site ne bloque pas les dates toute seule : bloquez-les à la main.</p></details>`,
+resa:()=>{
+  if(!C.site.bookingEndpoint)return `<h2>Réservations</h2><p style="color:var(--muted);margin-bottom:12px">Aucun service de réservation n’est branché. Suivez la section « Réservations » du fichier README, puis collez ici l’adresse obtenue et cliquez sur Enregistrer.</p>${F('Adresse du service de réservation','site.bookingEndpoint')}`;
+  if(!cfg.key)return `<h2>Réservations</h2><label>Clé administrateur (celle écrite dans votre script)<input id=adminkey type=password autocomplete=off></label><button class=p data-a=savekey>Enregistrer la clé sur cet appareil</button>`;
+  const n=(R||[]).filter(r=>r.statut=='nouvelle').length;
+  return `<h2>Réservations</h2><div class=row><button data-a=resaload>Actualiser</button><span style="color:var(--muted)">${R===null?'Chargement…':n+' nouvelle(s)'}</span></div>${rerr?`<p class=err style="margin-top:10px">${esc(rerr)}</p>`:''}<div style="margin-top:12px">${dec?composer():''}${(R||[]).map(card).join('')||(R?'<p style="color:var(--muted)">Aucune demande pour le moment.</p>':'')}</div>${tplHtml()}`},
+stats:()=>{
+  const h=need();if(h)return h;if(!STD)return `<h2>Chargement…</h2>${rerr?`<p class=err>${esc(rerr)}</p>`:''}`;
+  const N=calc(),rows=monthRows(N),cur=dIso(new Date()).slice(0,7),now=rows.find(r=>r.m==cur),td=dIso(new Date());
+  const last=[...Array(30)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);const k=dIso(d),x=STD.days[k]||{};return{k,v:x.v||0,q:x.q||0,fr:x.fr||0,en:x.en||0,de:x.de||0}});
+  const sum=k=>last.reduce((s,x)=>s+x[k],0),mx=Math.max(1,...last.map(x=>x.v)),sd=dIso(new Date(Date.now()-30*864e5));
+  const req=(R||[]).filter(r=>String(r.recu).slice(0,10)>=sd),acc=req.filter(r=>r.statut=='acceptee');
+  const fut=Object.keys(N).filter(d=>d>=td&&N[d].src!='blocked').length,k6=rows.slice(0,6).reduce((s,r)=>s+r.ca,0);
+  const kp=(t,v)=>`<div class=card style="margin:0"><div style="color:var(--muted);font-size:.8rem">${t}</div><div style="font:400 1.6rem Georgia,serif;color:var(--gold)">${v}</div></div>`;
+  rows.forEach(r=>{BK.rev[r.m]=BK.rev[r.m]||{}});
+  return `<h2>Statistiques</h2><div class=row><button data-a=statsreload>Actualiser</button></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0">${kp('Occupation ce mois',now.pct+' %')}${kp('CA estimé ce mois',eur(now.ca))}${kp('Nuits réservées à venir',fut)}${kp('Vues (30 jours)',sum('v'))}</div>
+  <h2>Fréquentation (30 derniers jours)</h2>
+  <div style="display:flex;align-items:flex-end;gap:2px;height:90px;margin-bottom:8px">${last.map(x=>`<div title="${x.k} : ${x.v} vue(s)" style="flex:1;background:var(--gold);height:${Math.max(2,Math.round(100*x.v/mx))}%"></div>`).join('')}</div>
+  <p style="color:var(--muted);font-size:.9rem">Langues : FR ${sum('fr')} · EN ${sum('en')} · DE ${sum('de')}<br>Parcours : ${sum('v')} vues → ${sum('q')} visiteurs ont choisi des dates → ${req.length} demandes → ${acc.length} acceptées${sum('v')?` (${(100*req.length/sum('v')).toFixed(1)} % des vues)`:''}</p>
+  <h2>Occupation et chiffre d’affaires</h2><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.85rem;min-width:560px">
+  <tr style="color:var(--muted);text-align:left"><th>Mois</th><th>Nuits<br>dir./Abnb/Bkg</th><th>Taux</th><th>CA direct</th><th>CA Airbnb</th><th>CA Booking</th><th>Total</th></tr>
+  ${rows.map(r=>`<tr style="border-top:1px solid var(--line)${r.m==cur?';color:var(--gold)':''}"><td>${MN(r.m)}</td><td>${r.direct} / ${r.airbnb} / ${r.booking}${r.blocked?` <small>(+${r.blocked} bloq.)</small>`:''}</td><td>${r.pct} %</td><td>≈ ${eur(r.rv.direct)}</td><td>${r.real.airbnb?'':'≈ '}${eur(r.rv.airbnb)}</td><td>${r.real.booking?'':'≈ '}${eur(r.rv.booking)}</td><td><b>${eur(r.ca)}</b></td></tr>`).join('')}</table></div>
+  <p style="color:var(--muted);font-size:.85rem;margin-top:8px">CA des 6 derniers mois affichés : ${eur(k6)}. « ≈ » = estimation d’après vos tarifs (Airbnb et Booking ne communiquent pas les montants). Une nuit n’est comptée qu’une fois. Taux = nuits occupées / jours du mois.</p>
+  <details style="margin-top:14px"><summary>Saisir le chiffre d’affaires réel (facultatif)</summary><p style="color:var(--muted);font-size:.9rem">Si vous renseignez un montant pour un mois, il remplace l’estimation de la plateforme.</p>
+  ${rows.map(r=>`<div class=l3 style="grid-template-columns:70px 1fr 1fr;align-items:end;margin-bottom:8px"><b>${MN(r.m)}</b>${F('Airbnb (€)','@rev.'+r.m+'.airbnb','number')}${F('Booking (€)','@rev.'+r.m+'.booking','number')}</div>`).join('')}<button class=p data-a=saverev>Enregistrer</button></details>`},
+discover:()=>`<h2>Découvrir les Vosges</h2><p style="color:var(--muted);margin-bottom:12px">Petite rubrique en bas du site : lieux, activités, bonnes adresses.</p>${C.discover.map((d,i)=>`<div class=card><label>Titre</label>${L3('discover.'+i+'.title')}<label style="margin-top:10px">Texte</label>${L3('discover.'+i+'.text',1)}${F('Lien (facultatif, https://...)','discover.'+i+'.url')}${CTRL('discover',i)}</div>`).join('')}<button data-a=adddisc2>+ Ajouter un lieu</button>`,
+promos:()=>need()||`<h2>Codes promo</h2><p style="color:var(--muted);margin-bottom:12px">Réduction en pourcentage ou en euros. Les visiteurs saisissent le code dans le formulaire de demande.</p>${BK.promos.map((p,i)=>{const k='@promos.'+i;return `<div class=card><div class=l3>${F('Code',k+'.code')}${SEL('Type',k+'.type',[['percent','Pourcentage (%)'],['amount','Montant fixe (€)']])}${F('Valeur',k+'.value','number')}${F('Utilisations max. (0 = illimité)',k+'.maxUses','number')}${F('Valable pour les arrivées du',k+'.from','date')}${F('au',k+'.to','date')}${SEL('Actif',k+'.active',[['true','Oui'],['false','Non']])}</div><p style="color:var(--muted)">Utilisé ${BK.uses[String(p.code).toUpperCase()]||0} fois</p>${CTRL('@promos',i)}</div>`}).join('')}<div class=row><button data-a=addpromo>+ Ajouter un code</button><button class=p data-a=savepromos>Enregistrer les codes</button></div>`,
+auto:()=>need()||`<h2>E-mails automatiques</h2><p style="color:var(--muted);margin-bottom:12px">Envoyés une fois par jour (vers 8 h) aux voyageurs dont la réservation est acceptée. Variables : {prenom} {nom} {arrivee} {depart} {nuits} {personnes} {total} {site} {promo}. Par sécurité, les messages sont désactivés tant que vous ne les activez pas.</p>
+  <div class=card><div class=row><button data-a=trigger>Activer l’envoi automatique quotidien</button><button class=s data-a=runauto>Lancer la vérification maintenant</button></div></div>
+  ${BK.auto.map((r,i)=>{const k='@auto.'+i;return `<div class=card>${F('Nom (pour vous)',k+'.name')}<div class=l3>${SEL('Actif',k+'.enabled',[['true','Oui'],['false','Non']])}${SEL('Par rapport à',k+'.event',[['arrivee','la date d’arrivée'],['depart','la date de départ']])}${F('Jours (−1 = la veille, 0 = le jour même, 3 = 3 jours après)',k+'.offset','number')}${F('Code promo à insérer à la place de {promo}',k+'.promo')}</div><label style="margin-top:10px">Objet</label>${L3(k+'.subject')}<label style="margin-top:10px">Message</label>${L3(k+'.body',1)}<div class=row><button class=s data-a=testauto data-id="${esc(r.id)}">Envoyer un test à mon adresse</button></div>${CTRL('@auto',i)}</div>`}).join('')}<div class=row><button data-a=addauto>+ Ajouter un message</button><button class=p data-a=saveauto>Enregistrer</button></div>`,
+faq:()=>`<h2>Questions fréquentes</h2>${C.faq.map((f,i)=>`<div class=card><label>Question</label>${L3('faq.'+i+'.q')}<label style="margin-top:10px">Réponse</label>${L3('faq.'+i+'.a',1)}${CTRL('faq',i)}</div>`).join('')}<button data-a=addfaq>+ Ajouter une question</button>`,
+legal:()=>`<h2>Mentions légales</h2><p style="color:var(--muted);margin-bottom:12px">Ces informations s’affichent dans « Mentions légales », en bas du site. Complétez-les avec l’identité du propriétaire qui publie le site.</p>
+  ${F('Nom de l’éditeur (propriétaire)','legal.owner')}${F('Adresse postale','legal.address')}${F('Téléphone','legal.phone')}${F('SIRET (si vous en avez un)','legal.siret')}
+  <h2>Hébergement</h2>${F('Hébergeur','legal.host')}${F('Adresse de l’hébergeur','legal.hostAddr')}
+  <h2>Signature du site</h2>${F('Nom affiché en bas de page','credit.name')}${F('Lien (facultatif, https://...)','credit.url')}
+  <h2>Texte supplémentaire (facultatif)</h2>${L3('legal.extra',1)}`,
+avis:()=>`<h2>Avis des voyageurs</h2>${C.reviews.map((r,i)=>`<div class=card>${F('Prénom','reviews.'+i+'.name')}${L3('reviews.'+i+'.text',1)}${CTRL('reviews',i)}</div>`).join('')}
+  <button data-a=addrv>+ Ajouter un avis</button>`};
+function render(){
+  const y=scrollY;
+  $('#root').innerHTML=`<div class=tabs>${[['home','Tableau de bord'],['resa','Réservations'],['stats','Statistiques'],['infos','Infos'],['sections','Sections'],['textes','Textes'],['photos','Photos'],['avis','Avis'],['tarifs','Tarifs'],['calendriers','Calendriers'],['faq','FAQ'],['discover','Découvrir'],['promos','Codes promo'],['auto','E-mails auto'],['legal','Légal']].map(([k,n])=>`<button data-tab=${k} class="${k==tab?'on':''}">${n}${k=='resa'&&nbNew()?`<span class=badge>${nbNew()}</span>`:''}</button>`).join('')}</div>
+  <div class=wrap>${TABS[tab]()}</div><div class=bar><span id=st>${dirty?'Modifications non enregistrées':'À jour'}</span><button class=s data-a=out>Quitter</button><button class=p data-a=save>Enregistrer</button></div>`;
+  scrollTo(0,y);if(tab=='calendriers')calStatus();
+}
+const st=(t,c='')=>{const e=$('#st');if(e){e.textContent=t;e.className=c}};
+async function save(){
+  st('Enregistrement…');
+  const r=await api('content.json',{method:'PUT',body:JSON.stringify({message:'Mise à jour du contenu (admin)',content:b64(JSON.stringify(C,null,1)),sha})});
+  if(r.ok){sha=(await r.json()).content.sha;dirty=false;st('Enregistré. Le site se met à jour dans 1 à 2 minutes.','ok')}
+  else st(r.status==409||r.status==422?'Le fichier a changé ailleurs : rechargez la page.':'Échec de l’enregistrement ('+r.status+').','err');
+}
+function toJpeg(file){return new Promise((ok,ko)=>{const im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.82).split(',')[1])};im.onerror=ko;im.src=URL.createObjectURL(file)})}
+async function upload(file,name){
+  st('Envoi de la photo…');
+  const data=await toJpeg(file),path='photos/'+name,g=await api(path),body={message:'Photo : '+name,content:data};
+  if(g.ok)body.sha=(await g.json()).sha;
+  const r=await api(path,{method:'PUT',body:JSON.stringify(body)});
+  if(!r.ok){st('Échec de l’envoi de la photo ('+r.status+').','err');return false}
+  bust=Date.now();st('Photo envoyée.','ok');return true;
+}
+const mv=(a,i,d)=>{const j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]]};
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.p&&!t.dataset.a){SET(C,t.dataset.p,t.value);if(t.dataset.p[0]=='@'){bdirty=true;st('Non enregistré : cliquez sur Enregistrer dans cet onglet.')}else{dirty=true;st('Modifications non enregistrées')}}});
+document.addEventListener('change',async e=>{
+  const t=e.target;if(t.type!='file'||!t.files[0])return;
+  try{
+    if(t.id=='newph'){const n=(t.files[0].name.replace(/\.[^.]+$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'-')||'photo')+'-'+Date.now().toString(36)+'.jpg';
+      if(await upload(t.files[0],n)){C.photos.push({src:'photos/'+n,h:Math.floor(Math.random()*180)+20,alt:['','','']});dirty=true;render();st('Photo ajoutée : pensez à Enregistrer.','ok')}}
+    else if(t.dataset.rep!==undefined){const n=C.photos[+t.dataset.rep].src.replace('photos/','');if(await upload(t.files[0],n)){render();st('Photo remplacée. Elle peut mettre quelques minutes à changer sur le site.','ok')}}
+  }catch(x){st('Image illisible.','err')}
+});
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('button');if(!t)return;const d=t.dataset;
+  if(d.tab){tab=d.tab;render();goTab();scrollTo(0,0);return}
+  if(d.a=='in'||d.a=='setup')return enter();
+  if(d.a=='forget'){if(confirm('Supprimer la clé enregistrée sur cet appareil ?')){localStorage.removeItem('adm');login()}return}
+  if(d.a=='out'){if(!dirty||confirm('Quitter sans enregistrer ?')){C=cfg=null;dirty=false;login()}return}
+  if(d.a=='save')return save();
+  if(d.a=='resaload')return resaLoad();if(d.a=='savekey')return saveKey();if(d.a=='accept'||d.a=='decline'){dec={id:d.id,type:d.a};tab='resa';render();goTab();scrollTo(0,0);return}
+  if(d.a=='sendmail')return sendMail();if(d.a=='cancelmail'){dec=null;return render()}if(d.a=='savetpl')return saveTpl();
+  if(d.a=='addpromo'){BK.promos.push({code:'',type:'percent',value:10,from:'',to:'',maxUses:0,active:'true'});bdirty=true;return render()}
+  if(d.a=='addauto'){BK.auto.push({id:'r'+Date.now().toString(36),name:'Nouveau message',event:'arrivee',offset:-1,enabled:'false',promo:'',subject:['','',''],body:['','','']});bdirty=true;return render()}
+  if(d.a=='savepromos')return bkSave('savePromos','promos');if(d.a=='saveauto')return bkSave('saveAuto','auto');
+  if(d.a=='homereload'){R=null;STD=null;render();return goTab()}if(d.a=='statsreload'){STD=null;return statsLoad()}if(d.a=='saverev')return bkSave('saveRevenue','rev');
+  if(d.a=='testauto')return bkAct({action:'testAuto',id:d.id},'Test envoyé à votre adresse e-mail.');
+  if(d.a=='runauto')return bkAct({action:'runAuto'},'Vérification terminée.');if(d.a=='trigger')return bkAct({action:'installTrigger'},'Envoi automatique quotidien activé (vers 8 h).');if(d.tl){tplSync();tlang=d.tl;return render()}
+  if(d.a=='calsave')return calSave(d.k);if(d.a=='caldel')return calDel(d.k);if(d.a=='sync')return sync();
+  const a=d.p?P(C,d.p):null,i=+d.i;
+  if(d.a=='up')mv(a,i,-1);else if(d.a=='dn')mv(a,i,1);
+  else if(d.a=='del'){if(!confirm('Supprimer cet élément ?'))return;a.splice(i,1)}
+  else if(d.a=='add')a.push(Array(+d.n).fill(''));
+  else if(d.a=='addrv')C.reviews.push({name:'',text:['','','']});
+  else if(d.a=='addsec')C.sections.push(d.s);
+  else if(d.a=='addseason')C.pricing.seasons.push({name:['','',''],from:'',to:'',price:0,minNights:0});
+  else if(d.a=='adddisc')C.pricing.discounts.push({nights:7,percent:10});
+  else if(d.a=='addfaq')C.faq.push({q:['','',''],a:['','','']});
+  else if(d.a=='dup'){const s=JSON.parse(JSON.stringify(C.pricing.seasons[i]));s.from=yr(s.from);s.to=yr(s.to);C.pricing.seasons.splice(i+1,0,s)}
+  else if(d.a=='adddisc2')C.discover.push({title:['','',''],text:['','',''],url:''});
+  else return;
+  if(d.p&&d.p[0]=='@')bdirty=true;else dirty=true;render();
+});
+addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.id=='code')enter()});
+login();
+</script>
+</body>
+</html>
